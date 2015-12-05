@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ChessAnalyser.Satellite.PGN
@@ -17,7 +16,7 @@ namespace ChessAnalyser.Satellite.PGN
         /// Parses given pgn.
         /// </summary>
         /// <param name="pgn">Pgn to parse.</param>
-        public static void Parse(DataPGN pgn)
+        public static ParsedPGN Parse(DataPGN pgn)
         {
             var match = _parsingRegex.Match(pgn.Data);
             var tagNames = getValues("tagName", match);
@@ -40,9 +39,15 @@ namespace ChessAnalyser.Satellite.PGN
 
             var endMarkers = getValues("endMarker", match);
 
-            throw new NotImplementedException();
+            return new ParsedPGN(moveValues, moveValues2);
         }
 
+        /// <summary>
+        /// Get values from given match.
+        /// </summary>
+        /// <param name="key">Key to values.</param>
+        /// <param name="match">The parsed match.</param>
+        /// <returns>The values</returns>
         private static IEnumerable<string> getValues(string key, Match match)
         {
             var result = new List<string>();

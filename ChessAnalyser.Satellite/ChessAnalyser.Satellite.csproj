@@ -53,6 +53,7 @@
     <Compile Include="PGN\DataPGN.cs" />
     <Compile Include="PGN\GamesManager.cs" />
     <Compile Include="PGN\GamesService.cs" />
+    <Compile Include="PGN\ParsedPGN.cs" />
     <Compile Include="PGN\Parser.cs" />
     <Compile Include="SatelliteConfiguration.cs" />
     <Compile Include="Services\InMemoryService.cs" />

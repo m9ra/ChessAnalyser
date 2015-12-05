@@ -19,7 +19,14 @@ namespace ChessAnalyser.Explorer
 
         static void client_EntryAdded(DataPGN entry)
         {
-            Parser.Parse(entry);
+            var parsed = Parser.Parse(entry);
+            for (var i = 0; i < parsed.Count; ++i)
+            {
+                var whiteMove = parsed.GetWhiteMove(i);
+                var blackMove = parsed.GetBlackMove(i);
+
+                Console.WriteLine("{0}. {1} {2}", i, whiteMove, blackMove);
+            }
         }
     }
 }
