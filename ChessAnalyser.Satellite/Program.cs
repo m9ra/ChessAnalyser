@@ -20,7 +20,6 @@ namespace ChessAnalyser.Satellite
             //WORKAROUND for mono SSL handling
             System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
-
             var networkManager = new NetworkServiceManager(SatelliteConfiguration.ListenPort);
 
             //register manager for games

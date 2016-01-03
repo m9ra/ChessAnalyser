@@ -41,6 +41,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Rules\BoardState.cs" />
+    <Compile Include="Rules\Move.cs" />
+    <Compile Include="Rules\PiecePosition.cs" />
+    <Compile Include="Rules\Pieces\Bishop.cs" />
+    <Compile Include="Rules\Pieces\King.cs" />
+    <Compile Include="Rules\Pieces\Knight.cs" />
+    <Compile Include="Rules\Pieces\Pawn.cs" />
+    <Compile Include="Rules\Pieces\PieceBase.cs" />
+    <Compile Include="Rules\Pieces\Queen.cs" />
+    <Compile Include="Rules\Pieces\Rook.cs" />
+    <Compile Include="Rules\Square.cs" />
     <Compile Include="VariantTree.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
