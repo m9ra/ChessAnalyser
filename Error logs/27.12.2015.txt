@@ -1,0 +1,22 @@
+[DOWNLOAD] 1384001808   data/games/sladot/1384001808.pgn
+[ERROR] 1384076840      data/games/sladot/1384076840.pgn
+[ERROR] 1384076840      data/games/sladot/1384076840.pgn
+[ERROR] 1384076840      data/games/sladot/1384076840.pgn
+[ERROR] 1384076840      data/games/sladot/1384076840.pgn
+[ERROR] 1384076840      data/games/sladot/1384076840.pgn
+[ERROR] 1384076840      data/games/sladot/1384076840.pgn
+[ERROR] 1384076840      data/games/sladot/1384076840.pgn
+[ERROR] 1384076840      data/games/sladot/1384076840.pgn
+[ERROR] 1384076840      data/games/sladot/1384076840.pgn
+[ERROR] 1384076840      data/games/sladot/1384076840.pgn
+[ERROR] 1384076840      data/games/sladot/1384076840.pgn
+[ERROR] 1384076840      data/games/sladot/1384076840.pgn
+[DOWNLOAD] 1384076840   data/games/sladot/1384076840.pgn
+
+Unhandled Exception:
+System.Net.WebException: The remote server returned an error: (502) Bad Gateway.
+  at System.Net.HttpWebRequest.CheckFinalStatus (System.Net.WebAsyncResult result) [0x00000] in <filename unknown>:0
+  at System.Net.HttpWebRequest.SetResponseData (System.Net.WebConnectionData data) [0x00000] in <filename unknown>:0
+[ERROR] FATAL UNHANDLED EXCEPTION: System.Net.WebException: The remote server returned an error: (502) Bad Gateway.
+  at System.Net.HttpWebRequest.CheckFinalStatus (System.Net.WebAsyncResult result) [0x00000] in <filename unknown>:0
+  at System.Net.HttpWebRequest.SetResponseData (System.Net.WebConnectionData data) [0x00000] in <filename unknown>:0

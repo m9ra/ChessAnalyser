@@ -64,7 +64,7 @@ namespace ChessAnalyser.Satellite.PGN.Downloaders
             foreach (var idToDownload in idsToDownload)
             {
                 var pgn = downloadPGN(idToDownload);
-                if (pgn.Data.Contains("html>"))
+                if (pgn.Data==null || pgn.Data.Contains("html>"))
                 {
                     //probably some kind of error - wait until next iteration
 
@@ -173,10 +173,17 @@ namespace ChessAnalyser.Satellite.PGN.Downloaders
         /// <returns>The data.</returns>
         private string downloadData(string url)
         {
-            var client = getLoggedClient();
+            try
+            {
+                var client = getLoggedClient();
 
-            string htmlCode = client.DownloadString(url);
-            return htmlCode;
+                string htmlCode = client.DownloadString(url);
+                return htmlCode;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <summary>
