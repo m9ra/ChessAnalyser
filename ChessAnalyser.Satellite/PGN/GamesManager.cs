@@ -43,6 +43,11 @@ namespace ChessAnalyser.Satellite.PGN
         internal event ActionPGN OnDownloadError;
 
         /// <summary>
+        /// Event fired when error occured during listing.
+        /// </summary>
+        internal event ActionPGN OnListingError;
+
+        /// <summary>
         /// Downloaders that are managed by this manager.
         /// </summary>
         private readonly DownloaderPGN[] _downloaders;
@@ -111,17 +116,25 @@ namespace ChessAnalyser.Satellite.PGN
 
                     foreach (var pgn in downloader.DownloadNew())
                     {
-                        if (pgn.Data == null)
+                        if (pgn.Id == null)
                         {
-                            //error has occured
-                            if (OnDownloadError != null)
-                                OnDownloadError(pgn, getPGNPath(pgn, downloader));
+                            //error while listing ids has occured
+                            if (OnListingError != null)
+                                OnListingError(pgn, service.Name);
+
                         }
                         else
-                        {
-                            save(pgn, downloader);
-                            service.AddNewEntry(pgn);
-                        }
+                            if (pgn.Data == null)
+                            {
+                                //error has occured
+                                if (OnDownloadError != null)
+                                    OnDownloadError(pgn, getPGNPath(pgn, downloader));
+                            }
+                            else
+                            {
+                                save(pgn, downloader);
+                                service.AddNewEntry(pgn);
+                            }
                     }
                 }
 

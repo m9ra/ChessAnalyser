@@ -60,11 +60,19 @@ namespace ChessAnalyser.Satellite.PGN.Downloaders
         /// <inheritdoc/>
         internal override IEnumerable<DataPGN> DownloadNew()
         {
-            var idsToDownload = getNewIdsToDownload().ToArray();
-            foreach (var idToDownload in idsToDownload)
+            var idsToDownload = getNewIdsToDownload();
+            if (idsToDownload == null)
+            {
+                //error occured during listing
+                yield return new DataPGN(null, null);
+                yield break;
+            }
+
+            var idsToDownloadArray = idsToDownload.ToArray();
+            foreach (var idToDownload in idsToDownloadArray)
             {
                 var pgn = downloadPGN(idToDownload);
-                if (pgn.Data==null || pgn.Data.Contains("html>"))
+                if (pgn.Data == null || pgn.Data.Contains("html>"))
                 {
                     //probably some kind of error - wait until next iteration
 
@@ -117,6 +125,9 @@ namespace ChessAnalyser.Satellite.PGN.Downloaders
             while (!isComplete)
             {
                 var pageIds = getPageIds(page);
+                if (pageIds == null)
+                    return null;
+
                 foreach (var pageId in pageIds)
                 {
                     if (!knownIds.Add(pageId))
@@ -149,6 +160,9 @@ namespace ChessAnalyser.Satellite.PGN.Downloaders
 
             var listingUrl = string.Format("http://www.chess.com/home/game_archive?sortby=&show=live&member={0}&page={1}", _username, page);
             var data = downloadData(listingUrl);
+            if (data == null)
+                //error when downloading listing occured
+                return null;
 
             var match = _parseGameIds.Match(data);
             while (match.Success)

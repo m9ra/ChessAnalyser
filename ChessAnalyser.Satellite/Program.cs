@@ -44,6 +44,7 @@ namespace ChessAnalyser.Satellite
 
             manager.OnSave += (pgn, target) => Console.WriteLine("[DOWNLOAD] " + pgn.Id + "\t" + target);
             manager.OnDownloadError += (pgn, source) => Console.WriteLine("[ERROR] " + pgn.Id + "\t" + source);
+            manager.OnListingError += (pgn, source) => Console.WriteLine("[LISTING_ERROR] " + source);
             manager.Start();
             return manager;
         }
