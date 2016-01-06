@@ -33,15 +33,15 @@ namespace ChessAnalyser.Explorer.Rules.Pieces
                     GenerateMove(pieceSquare, pawn1Target, board, moves);
             }
 
+            // pawn takes
             var leftTake = pawn1Target + MoveDirection.Left;
             var rightTake = pawn1Target + MoveDirection.Right;
             GenerateTakeOnlyMove(pieceSquare, leftTake, board, moves);
             GenerateTakeOnlyMove(pieceSquare, rightTake, board, moves);
 
+            //en passan moves
             generateEnPassanOnly(pieceSquare, MoveDirection.Left, board, moves);
             generateEnPassanOnly(pieceSquare, MoveDirection.Right, board, moves);
-
-            throw new NotImplementedException();
 
             return moves;
         }

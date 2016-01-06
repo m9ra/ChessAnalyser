@@ -51,6 +51,7 @@
     <Compile Include="Rules\Pieces\PieceBase.cs" />
     <Compile Include="Rules\Pieces\Queen.cs" />
     <Compile Include="Rules\Pieces\Rook.cs" />
+    <Compile Include="Rules\RayGenerator.cs" />
     <Compile Include="Rules\Square.cs" />
     <Compile Include="VariantTree.cs" />
     <Compile Include="Program.cs" />

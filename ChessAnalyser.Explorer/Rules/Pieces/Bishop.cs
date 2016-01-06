@@ -8,6 +8,16 @@ namespace ChessAnalyser.Explorer.Rules.Pieces
 {
     class Bishop : PieceBase
     {
+        /// <summary>
+        /// Bishop can move along diagonals.
+        /// </summary>
+        private readonly RayGenerator[] _bishopGenerators = new[]{
+            RayGenerator.BottomLeftGenerator,
+            RayGenerator.BottomRightGenerator,
+            RayGenerator.UpLeftGenerator,
+            RayGenerator.UpRightGenerator,
+        };
+
         /// <inheritdoc/>
         protected override string getPieceNotation()
         {
@@ -17,7 +27,7 @@ namespace ChessAnalyser.Explorer.Rules.Pieces
         /// <inheritdoc/>
         protected override IEnumerable<Move> generateMoves(Square pieceSquare, BoardState board)
         {
-            throw new NotImplementedException();
+            return GenerateMoves(pieceSquare, _bishopGenerators, board);
         }
     }
 }

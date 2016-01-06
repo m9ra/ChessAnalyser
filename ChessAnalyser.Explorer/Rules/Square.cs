@@ -23,7 +23,17 @@ namespace ChessAnalyser.Explorer.Rules
         /// </summary>
         public readonly BoardFile File;
 
+        /// <summary>
+        /// Determine whether the square lies out of the board.
+        /// </summary>
+        public readonly bool IsOutOfBoard;
+
         public static Square operator +(Square square, MoveDirection direction)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal Square Shift(int fileOffset, int rowOffset)
         {
             throw new NotImplementedException();
         }

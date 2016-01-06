@@ -35,6 +35,24 @@ namespace ChessAnalyser.Explorer.Rules.Pieces
         }
 
         /// <summary>
+        /// Generates move from source to squares specified by generators.
+        /// </summary>
+        /// <param name="pieceSquare">Square where the moved piece is standing.</param>
+        /// <param name="generators">Generators that are used for move generation.</param>
+        /// <param name="board">Board where move is made.</param>
+        /// <param name="moves">Storage for generated moves.</param>
+        /// <returns>Generated moves.</returns>
+        protected IEnumerable<Move> GenerateMoves(Square pieceSquare, IEnumerable<RayGenerator> generators, BoardState board)
+        {
+            var moves = new List<Move>();
+            foreach (var generator in generators)
+            {
+                generator.GenerateMoves(pieceSquare, board, moves);
+            }
+
+            return moves;
+        }
+        /// <summary>
         /// Generates move from source to target which has to result in take action.
         /// </summary>
         /// <param name="source">Source square.</param>
