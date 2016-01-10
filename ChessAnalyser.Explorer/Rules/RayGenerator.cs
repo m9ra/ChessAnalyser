@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChessAnalyser.Explorer.Rules
 {
-    class RayGenerator
+    public class RayGenerator
     {
         /// <summary>
         /// Ray generator for up direction.

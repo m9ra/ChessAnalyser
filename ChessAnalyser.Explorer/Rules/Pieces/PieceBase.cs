@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChessAnalyser.Explorer.Rules.Pieces
 {
-    abstract class PieceBase
+    public abstract class PieceBase
     {
         /// <summary>
         /// Name of piece as in algebraic notation.

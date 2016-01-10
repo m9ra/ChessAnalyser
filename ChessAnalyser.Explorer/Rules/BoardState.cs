@@ -6,12 +6,22 @@ using System.Threading.Tasks;
 
 namespace ChessAnalyser.Explorer.Rules
 {
-    class BoardState
+    public class BoardState
     {
         /// <summary>
         /// Move that has been done lastly.
         /// </summary>
         public readonly Move LastMove;
+
+        /// <summary>
+        /// Determine whether short castle is possible. (No Rook, King movement)
+        /// </summary>
+        public readonly bool ShortCastleVanished;
+
+        /// <summary>
+        /// Determine whether long castle is possible. (No Rook, King movement)
+        /// </summary>
+        public bool LongCastleVanished;
 
         /// <summary>
         /// Gets moves that are available from current state.
@@ -50,7 +60,7 @@ namespace ChessAnalyser.Explorer.Rules
             if (matchedMoves.Count == 1)
                 //we have found single matching move
                 return matchedMoves[0];
-            
+
             //There is no or many matching moves - we cannot distinguish them
             //with given notation
             return null;
@@ -93,6 +103,16 @@ namespace ChessAnalyser.Explorer.Rules
         /// <param name="square">The tested square.</param>
         /// <returns><c>true</c> when the piece is pawn, <c>false</c> otherwise.</returns>
         internal bool IsPawn(Square square)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Determine whether king standing on given square would be in check.
+        /// </summary>
+        /// <param name="square">The tested square.</param>
+        /// <returns><c>true</c> if the square is attacked by enemy piece, <c>false</c> otherwise.</returns>
+        internal bool IsChecked(Square square)
         {
             throw new NotImplementedException();
         }

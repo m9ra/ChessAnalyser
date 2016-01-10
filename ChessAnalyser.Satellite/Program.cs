@@ -21,6 +21,7 @@ namespace ChessAnalyser.Satellite
             System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
             var networkManager = new NetworkServiceManager(SatelliteConfiguration.ListenPort);
+            networkManager.OnNetworkError += errorType => Console.WriteLine("[NETWORK_ERROR] " + errorType);
 
             //register manager for games
             var gamesManager = CreateGamesManager();

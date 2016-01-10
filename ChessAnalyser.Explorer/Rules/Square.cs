@@ -11,7 +11,7 @@ namespace ChessAnalyser.Explorer.Rules
     /// <summary>
     /// Represents square of the chessboard. Squares are treated as singletons.
     /// </summary>
-    class Square
+    public class Square
     {
         /// <summary>
         /// Rank of the square.

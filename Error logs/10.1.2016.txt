@@ -1,0 +1,59 @@
+[DOWNLOAD] 1415497591   data/games/m9ra/1415497591.pgn
+[DOWNLOAD] 1415505655   data/games/m9ra/1415505655.pgn
+[DOWNLOAD] 1415761530   data/games/m9ra/1415761530.pgn
+
+Unhandled Exception:
+System.IO.IOException: Write failure ---> System.Net.Sockets.SocketException: Connection reset by peer
+  at System.Net.Sockets.Socket.Send (System.Byte[] buf, Int32 offset, Int32 size, SocketFlags flags) [0x00000] in <filename unknown>:0
+  at System.Net.Sockets.NetworkStream.Write (System.Byte[] buffer, Int32 offset, Int32 size) [0x00000] in <filename unknown>:0
+  --- End of inner exception stack trace ---
+  at System.Net.Sockets.NetworkStream.Write (System.Byte[] buffer, Int32 offset, Int32 size) [0x00000] in <filename unknown>:0
+  at System.IO.BinaryWriter.Write (System.String value) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.ObjectWriter.WriteString (System.IO.BinaryWriter writer, Int64 id, System.String str) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.ObjectWriter.WriteObjectInstance (System.IO.BinaryWriter writer, System.Object obj, Boolean isValueObject) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.ObjectWriter.WriteValue (System.IO.BinaryWriter writer, System.Type valueType, System.Object val) [0x00000] in <filename unknown>:0
+  at DataPGN__TypeMetadata.WriteObjectData (System.Runtime.Serialization.Formatters.Binary.ObjectWriter , System.IO.BinaryWriter , System.Object ) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.ObjectWriter.WriteObject (System.IO.BinaryWriter writer, Int64 id, System.Object obj) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.ObjectWriter.WriteObjectInstance (System.IO.BinaryWriter writer, System.Object obj, Boolean isValueObject) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.ObjectWriter.WriteQueuedObjects (System.IO.BinaryWriter writer) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.ObjectWriter.WriteObjectGraph (System.IO.BinaryWriter writer, System.Object obj, System.Runtime.Remoting.Messaging.Header[] headers) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.BinaryFormatter.Serialize (System.IO.Stream serializationStream, System.Object graph, System.Runtime.Remoting.Messaging.Header[] headers) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.BinaryFormatter.Serialize (System.IO.Stream serializationStream, System.Object graph) [0x00000] in <filename unknown>:0
+  at ChessAnalyser.Satellite.Network.NetworkService`1[ChessAnalyser.Satellite.PGN.DataPGN].send (System.Net.Sockets.TcpClient client, ChessAnalyser.Satellite.Network.ServiceCommand`1 command) [0x00000] in <filename unknown>:0
+  at ChessAnalyser.Satellite.Network.NetworkService`1[ChessAnalyser.Satellite.PGN.DataPGN].sendAllEntries (System.Net.Sockets.TcpClient client) [0x00000] in <filename unknown>:0
+  at ChessAnalyser.Satellite.Network.NetworkService`1[ChessAnalyser.Satellite.PGN.DataPGN].ReadCommands (System.Net.Sockets.TcpClient client) [0x00000] in <filename unknown>:0
+  at ChessAnalyser.Satellite.Network.NetworkService+<>c__DisplayClass3.<AcceptClient>b__1 () [0x00000] in <filename unknown>:0
+  at System.Threading.Thread.StartInternal () [0x00000] in <filename unknown>:0
+[ERROR] FATAL UNHANDLED EXCEPTION: System.IO.IOException: Write failure ---> System.Net.Sockets.SocketException: Connection reset by peer
+  at System.Net.Sockets.Socket.Send (System.Byte[] buf, Int32 offset, Int32 size, SocketFlags flags) [0x00000] in <filename unknown>:0
+  at System.Net.Sockets.NetworkStream.Write (System.Byte[] buffer, Int32 offset, Int32 size) [0x00000] in <filename unknown>:0
+  --- End of inner exception stack trace ---
+  at System.Net.Sockets.NetworkStream.Write (System.Byte[] buffer, Int32 offset, Int32 size) [0x00000] in <filename unknown>:0
+  at System.IO.BinaryWriter.Write (System.String value) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.ObjectWriter.WriteString (System.IO.BinaryWriter writer, Int64 id, System.String str) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.ObjectWriter.WriteObjectInstance (System.IO.BinaryWriter writer, System.Object obj, Boolean isValueObject) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.ObjectWriter.WriteValue (System.IO.BinaryWriter writer, System.Type valueType, System.Object val) [0x00000] in <filename unknown>:0
+  at DataPGN__TypeMetadata.WriteObjectData (System.Runtime.Serialization.Formatters.Binary.ObjectWriter , System.IO.BinaryWriter , System.Object ) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.ObjectWriter.WriteObject (System.IO.BinaryWriter writer, Int64 id, System.Object obj) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.ObjectWriter.WriteObjectInstance (System.IO.BinaryWriter writer, System.Object obj, Boolean isValueObject) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.ObjectWriter.WriteQueuedObjects (System.IO.BinaryWriter writer) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.ObjectWriter.WriteObjectGraph (System.IO.BinaryWriter writer, System.Object obj, System.Runtime.Remoting.Messaging.Header[] headers) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.BinaryFormatter.Serialize (System.IO.Stream serializationStream, System.Object graph, System.Runtime.Remoting.Messaging.Header[] headers) [0x00000] in <filename unknown>:0
+  at System.Runtime.Serialization.Formatters.Binary.BinaryFormatter.Serialize (System.IO.Stream serializationStream, System.Object graph) [0x00000] in <filename unknown>:0
+  at ChessAnalyser.Satellite.Network.NetworkService`1[ChessAnalyser.Satellite.PGN.DataPGN].send (System.Net.Sockets.TcpClient client, ChessAnalyser.Satellite.Network.ServiceCommand`1 command) [0x00000] in <filename unknown>:0
+  at ChessAnalyser.Satellite.Network.NetworkService`1[ChessAnalyser.Satellite.PGN.DataPGN].sendAllEntries (System.Net.Sockets.TcpClient client) [0x00000] in <filename unknown>:0
+  at ChessAnalyser.Satellite.Network.NetworkService`1[ChessAnalyser.Satellite.PGN.DataPGN].ReadCommands (System.Net.Sockets.TcpClient client) [0x00000] in <filename unknown>:0
+  at ChessAnalyser.Satellite.Network.NetworkService+<>c__DisplayClass3.<AcceptClient>b__1 () [0x00000] in <filename unknown>:0
+  at System.Threading.Thread.StartInternal () [0x00000] in <filename unknown>:0
+
+Unhandled Exception:
+System.Net.Sockets.SocketException: Invalid arguments
+  at System.Net.Sockets.Socket.Accept () [0x00000] in <filename unknown>:0
+  at System.Net.Sockets.TcpListener.AcceptTcpClient () [0x00000] in <filename unknown>:0
+  at ChessAnalyser.Satellite.Network.NetworkServiceManager.Run () [0x00000] in <filename unknown>:0
+  at System.Threading.Thread.StartInternal () [0x00000] in <filename unknown>:0
+[ERROR] FATAL UNHANDLED EXCEPTION: System.Net.Sockets.SocketException: Invalid arguments
+  at System.Net.Sockets.Socket.Accept () [0x00000] in <filename unknown>:0
+  at System.Net.Sockets.TcpListener.AcceptTcpClient () [0x00000] in <filename unknown>:0
+  at ChessAnalyser.Satellite.Network.NetworkServiceManager.Run () [0x00000] in <filename unknown>:0
+  at System.Threading.Thread.StartInternal () [0x00000] in <filename unknown>:0

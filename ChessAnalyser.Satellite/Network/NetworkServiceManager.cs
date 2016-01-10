@@ -15,12 +15,25 @@ using ChessAnalyser.Satellite.Services;
 
 namespace ChessAnalyser.Satellite.Network
 {
+    enum ErrorType { Accept, Close, Send, Receive };
+
+    /// <summary>
+    /// Handler for network errors.
+    /// </summary>
+    /// <param name="type">Type of the network error.</param>
+    delegate void NetworkErrorAction(ErrorType type);
+
     class NetworkServiceManager
     {
         /// <summary>
         /// Port where service manager is listening.
         /// </summary>
         internal readonly int ListenPort;
+
+        /// <summary>
+        /// Event fired when network error appears.
+        /// </summary>
+        internal event NetworkErrorAction OnNetworkError;
 
         /// <summary>
         /// Determine whether manager should end.
@@ -61,7 +74,17 @@ namespace ChessAnalyser.Satellite.Network
             listener.Start();
             while (!_isEnd)
             {
-                var client = listener.AcceptTcpClient();
+                TcpClient client = null;
+                try
+                {
+                    client = listener.AcceptTcpClient();
+                }
+                catch
+                {
+                    if (OnNetworkError != null)
+                        OnNetworkError(ErrorType.Accept);
+                }
+
                 if (client != null)
                 {
                     //simple server accepts clients in separate threads
@@ -108,6 +131,8 @@ namespace ChessAnalyser.Satellite.Network
             catch
             {
                 //nothing to do
+                if (OnNetworkError != null)
+                    OnNetworkError(ErrorType.Close);
             }
         }
     }

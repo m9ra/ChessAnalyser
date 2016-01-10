@@ -16,7 +16,7 @@ namespace ChessAnalyser.Explorer.Rules
         Up, UpRight, Right, BottomRight, Bottom, BottomLeft, Left, UpLeft
     }
 
-    class Move
+    public class Move
     {
         /// <summary>
         /// The piece which is used as a result of promotion.
