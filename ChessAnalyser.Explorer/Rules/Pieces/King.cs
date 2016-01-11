@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChessAnalyser.Explorer.Rules.Pieces
 {
-    class King : PieceBase
+    class King : Piece
     {
         MoveDirection[] _kingDirections = Enum.GetValues(typeof(MoveDirection)).Cast<MoveDirection>().ToArray();
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChessAnalyser.Explorer.Rules.Pieces
 {
-    class Rook : PieceBase
+    class Rook : Piece
     {
         /// <summary>
         /// Queen can move along files and rows.

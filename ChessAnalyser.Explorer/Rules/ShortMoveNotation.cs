@@ -36,7 +36,7 @@ namespace ChessAnalyser.Explorer.Rules
         /// <summary>
         /// If available gives rank of the moved piece.
         /// </summary>
-        public readonly int? SourceRankHint;
+        public readonly BoardRank? SourceRankHint;
 
         /// <summary>
         /// If available gives file of the moved piece.
@@ -46,20 +46,35 @@ namespace ChessAnalyser.Explorer.Rules
         /// <summary>
         /// The piece moved.
         /// </summary>
-        public readonly PieceBase Piece;
+        public readonly Piece Piece;
+
+        /// <summary>
+        /// The piece which is result of promotion if available, <c>null</c> otherwise.
+        /// </summary>
+        public readonly Piece PromotedPiece;
 
         public ShortMoveNotation(string notation, bool isWhitesMove)
         {
+            IsWhitesMove = isWhitesMove;
+
             //parse castling
             var upperNotation = notation.ToUpperInvariant();
             if (upperNotation == "O-O")
             {
-                throw new NotImplementedException("Short castle");
+                Piece = Piece.King;
+                if (isWhitesMove)
+                    TargetSquare = Square.FromString("g1");
+                else
+                    TargetSquare = Square.FromString("g8");
             }
 
             if (upperNotation == "O-O-O")
             {
-                throw new NotImplementedException("Long castle");
+                Piece = Piece.King;
+                if (isWhitesMove)
+                    TargetSquare = Square.FromString("c1");
+                else
+                    TargetSquare = Square.FromString("c8");
             }
 
             //'Rbxc8+'
@@ -70,7 +85,22 @@ namespace ChessAnalyser.Explorer.Rules
             if (char.IsLower(takeSplit[0][0]))
             {
                 //'a4' or 'bxc3'
-                throw new NotImplementedException("pawn move");
+                if (IsTake)
+                {
+                    parse(takeSplit[0], out SourceFileHint, out SourceRankHint);
+                    TargetSquare = parseSquare(takeSplit[1]);
+                }
+                else
+                {
+                    //there are no hints
+                    TargetSquare = parseSquare(takeSplit[0]);
+                }
+
+                //only pawn moves can cause promotion
+                if (promotionSplit.Length > 1)
+                    PromotedPiece = parsePromotion(promotionSplit[1]);
+
+                return;
             }
 
             Piece = parsePiece(takeSplit[0][0]);
@@ -91,8 +121,6 @@ namespace ChessAnalyser.Explorer.Rules
 
             parse(hint, out SourceFileHint, out SourceRankHint);
             TargetSquare = parseSquare(targetSquareRepresentation);
-
-            throw new NotImplementedException("Promotion parsing.");
         }
 
         /// <summary>
@@ -101,9 +129,28 @@ namespace ChessAnalyser.Explorer.Rules
         /// <param name="hint">The parsed hint.</param>
         /// <param name="fileHint">Hint for file if available.</param>
         /// <param name="rankHint">Hint for rank if available.</param>
-        private void parse(string hint, out BoardFile? fileHint, out int? rankHint)
+        private void parse(string hint, out BoardFile? fileHint, out BoardRank? rankHint)
         {
-            throw new NotImplementedException();
+            if (hint.Length == 2)
+            {
+                //we have both hints
+                var hintSquare = Square.FromString(hint);
+                fileHint = hintSquare.File;
+                rankHint = hintSquare.Rank;
+                return;
+            }
+
+            var hintChar = hint[0];
+            if (char.IsDigit(hint[0]))
+            {
+                rankHint = Square.RankFrom(hintChar);
+                fileHint = null;
+            }
+            else
+            {
+                rankHint = null;
+                fileHint = Square.FileFrom(hintChar);
+            }
         }
 
         /// <summary>
@@ -111,9 +158,9 @@ namespace ChessAnalyser.Explorer.Rules
         /// </summary>
         /// <param name="pieceRepresentation">Char representation of a piece.</param>
         /// <returns>The parsed piece.</returns>
-        private PieceBase parsePiece(char pieceRepresentation)
+        private Piece parsePiece(char pieceRepresentation)
         {
-            throw new NotImplementedException();
+            return Piece.From(pieceRepresentation);
         }
 
         /// <summary>
@@ -123,7 +170,17 @@ namespace ChessAnalyser.Explorer.Rules
         /// <returns>The parsed square.</returns>
         private Square parseSquare(string squareRepresentation)
         {
-            throw new NotImplementedException();
+            return Square.FromString(squareRepresentation);
+        }
+
+        /// <summary>
+        /// Parses promotion string.
+        /// </summary>
+        /// <param name="promotionString">The promotion string.</param>
+        /// <returns>Piece which was promoted.</returns>
+        private Piece parsePromotion(string promotionString)
+        {
+            return Piece.From(promotionString[0]);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace ChessAnalyser.Explorer.Rules
         /// <summary>
         /// The piece which is used as a result of promotion.
         /// </summary>
-        public readonly PieceBase PromotionPiece;
+        public readonly Piece PromotionPiece;
 
         /// <summary>
         /// Source square of the move.

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChessAnalyser.Explorer.Rules.Pieces
 {
-    class Pawn : PieceBase
+    class Pawn : Piece
     {
         /// <inheritdoc/>
         protected override string getPieceNotation()
@@ -56,7 +56,7 @@ namespace ChessAnalyser.Explorer.Rules.Pieces
         /// <returns><c>true</c> whether the pawn is on its initial position, <c>false</c> otherwise.</returns>
         private bool isInitialPawnPosition(Square pieceSquare, BoardState board)
         {
-            return board.IsWhitePiece(pieceSquare) ? pieceSquare.Rank == 2 : pieceSquare.Rank == 7;
+            return board.IsWhitePiece(pieceSquare) ? pieceSquare.Rank == BoardRank._2 : pieceSquare.Rank == BoardRank._7;
         }
 
         /// <summary>

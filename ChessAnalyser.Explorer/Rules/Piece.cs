@@ -4,10 +4,44 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChessAnalyser.Explorer.Rules.Pieces
+using ChessAnalyser.Explorer.Rules.Pieces;
+
+namespace ChessAnalyser.Explorer.Rules
 {
-    public abstract class PieceBase
+    public abstract class Piece
     {
+        /// <summary>
+        /// King representation.
+        /// </summary>
+        internal static readonly King King = new King();
+
+        /// <summary>
+        /// Queen representation.
+        /// </summary>
+        internal static readonly Queen Queen = new Queen();
+
+        /// <summary>
+        /// Rook representation.
+        /// </summary>
+        internal static readonly Rook Rook = new Rook();
+
+        /// <summary>
+        /// Biship representation.
+        /// </summary>
+        internal static readonly Bishop Bishop = new Bishop();
+
+        /// <summary>
+        /// Knight representation.
+        /// </summary>
+        internal static readonly Knight Knight = new Knight();
+
+        /// <summary>
+        /// Pawn representation.
+        /// </summary>
+        internal static readonly Pawn Pawn = new Pawn();
+
+        private static readonly Dictionary<char, Piece> _pieces = new Dictionary<char, Piece>();
+
         /// <summary>
         /// Name of piece as in algebraic notation.
         /// </summary>
@@ -62,6 +96,16 @@ namespace ChessAnalyser.Explorer.Rules.Pieces
         protected void GenerateTakeOnlyMove(Square source, Square target, BoardState board, List<Move> moves)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Parses piece from character representation.
+        /// </summary>
+        /// <param name="pieceRepresentation">The char representation.</param>
+        /// <returns>The piece.</returns>
+        internal static Piece From(char pieceRepresentation)
+        {
+            return _pieces[pieceRepresentation];
         }
     }
 }

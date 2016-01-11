@@ -48,7 +48,7 @@
     <Compile Include="Rules\Pieces\King.cs" />
     <Compile Include="Rules\Pieces\Knight.cs" />
     <Compile Include="Rules\Pieces\Pawn.cs" />
-    <Compile Include="Rules\Pieces\PieceBase.cs" />
+    <Compile Include="Rules\Piece.cs" />
     <Compile Include="Rules\Pieces\Queen.cs" />
     <Compile Include="Rules\Pieces\Rook.cs" />
     <Compile Include="Rules\RayGenerator.cs" />

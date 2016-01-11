@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChessAnalyser.Explorer.Rules.Pieces
 {
-    class Knight : PieceBase
+    class Knight : Piece
     {
         private readonly int[][] _knightMoveOffsets = new[]{
             new[]{1,2},

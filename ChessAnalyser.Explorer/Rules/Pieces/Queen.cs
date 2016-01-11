@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChessAnalyser.Explorer.Rules.Pieces
 {
-    class Queen : PieceBase
+    class Queen : Piece
     {
         /// <summary>
         /// Queen can move in any direction.

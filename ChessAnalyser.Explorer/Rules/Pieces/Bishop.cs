@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChessAnalyser.Explorer.Rules.Pieces
 {
-    class Bishop : PieceBase
+    class Bishop : Piece
     {
         /// <summary>
         /// Bishop can move along diagonals.
