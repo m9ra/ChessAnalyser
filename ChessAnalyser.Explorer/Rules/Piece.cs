@@ -40,7 +40,15 @@ namespace ChessAnalyser.Explorer.Rules
         /// </summary>
         internal static readonly Pawn Pawn = new Pawn();
 
+        /// <summary>
+        /// Index of registered pieces.
+        /// </summary>
         private static readonly Dictionary<char, Piece> _pieces = new Dictionary<char, Piece>();
+
+        /// <summary>
+        /// Notation of the piece.
+        /// </summary>
+        internal string Notation { get { return getPieceNotation(); } }
 
         /// <summary>
         /// Name of piece as in algebraic notation.
@@ -55,6 +63,16 @@ namespace ChessAnalyser.Explorer.Rules
         /// <param name="board">Board where piece is standing.</param>
         /// <returns>The generated moves.</returns>
         protected abstract IEnumerable<Move> generateMoves(Square pieceSquare, BoardState board);
+
+        static Piece()
+        {
+            register(King);
+            register(Queen);
+            register(Rook);
+            register(Bishop);
+            register(Knight);
+            register(Pawn);
+        }
 
         /// <summary>
         /// Generates move from source to target.
@@ -107,5 +125,19 @@ namespace ChessAnalyser.Explorer.Rules
         {
             return _pieces[pieceRepresentation];
         }
+
+        #region Registration utilities
+        /// <summary>
+        /// Registers given piece.
+        /// </summary>
+        /// <param name="piece">The registered piece.</param>
+        private static void register(Piece piece)
+        {
+            var notation = piece.Notation;
+            if (notation.Length > 0)
+                _pieces[notation[0]] = piece;
+        }
+
+        #endregion
     }
 }

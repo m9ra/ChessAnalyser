@@ -24,6 +24,11 @@ namespace ChessAnalyser.Explorer.Rules
         public readonly bool IsCheck;
 
         /// <summary>
+        /// Determine if the move is causing mate.
+        /// </summary>
+        public readonly bool IsMate;
+
+        /// <summary>
         /// Determine whether the move is take.
         /// </summary>
         public readonly bool IsTake;
@@ -56,6 +61,11 @@ namespace ChessAnalyser.Explorer.Rules
         public ShortMoveNotation(string notation, bool isWhitesMove)
         {
             IsWhitesMove = isWhitesMove;
+            IsMate = notation.EndsWith("#");
+            IsCheck = notation.EndsWith("+") || IsMate;
+
+            if (IsCheck || IsMate)
+                notation = notation.Substring(0, notation.Length - 1);
 
             //parse castling
             var upperNotation = notation.ToUpperInvariant();
@@ -63,18 +73,32 @@ namespace ChessAnalyser.Explorer.Rules
             {
                 Piece = Piece.King;
                 if (isWhitesMove)
+                {
                     TargetSquare = Square.FromString("g1");
+                    parse("e1", out SourceFileHint, out SourceRankHint);
+                }
                 else
+                {
                     TargetSquare = Square.FromString("g8");
+                    parse("e8", out SourceFileHint, out SourceRankHint);
+                }
+                return;
             }
 
             if (upperNotation == "O-O-O")
             {
                 Piece = Piece.King;
                 if (isWhitesMove)
+                {
                     TargetSquare = Square.FromString("c1");
+                    parse("e1", out SourceFileHint, out SourceRankHint);
+                }
                 else
+                {
                     TargetSquare = Square.FromString("c8");
+                    parse("e8", out SourceFileHint, out SourceRankHint);
+                }
+                return;
             }
 
             //'Rbxc8+'
@@ -85,6 +109,7 @@ namespace ChessAnalyser.Explorer.Rules
             if (char.IsLower(takeSplit[0][0]))
             {
                 //'a4' or 'bxc3'
+                Piece = Piece.Pawn;
                 if (IsTake)
                 {
                     parse(takeSplit[0], out SourceFileHint, out SourceRankHint);
@@ -115,7 +140,7 @@ namespace ChessAnalyser.Explorer.Rules
             {
                 //source follows target square if taking is not present
                 var pieceMove = takeSplit[0];
-                hint = takeSplit[0].Substring(1, pieceMove.Length - 2);
+                hint = takeSplit[0].Substring(1, pieceMove.Length - 3);
                 targetSquareRepresentation = pieceMove.Substring(pieceMove.Length - 2);
             }
 
@@ -131,6 +156,13 @@ namespace ChessAnalyser.Explorer.Rules
         /// <param name="rankHint">Hint for rank if available.</param>
         private void parse(string hint, out BoardFile? fileHint, out BoardRank? rankHint)
         {
+            fileHint = null;
+            rankHint = null;
+
+            if (hint.Length == 0)
+                //nothing to parse
+                return;
+
             if (hint.Length == 2)
             {
                 //we have both hints
@@ -142,15 +174,9 @@ namespace ChessAnalyser.Explorer.Rules
 
             var hintChar = hint[0];
             if (char.IsDigit(hint[0]))
-            {
                 rankHint = Square.RankFrom(hintChar);
-                fileHint = null;
-            }
             else
-            {
-                rankHint = null;
                 fileHint = Square.FileFrom(hintChar);
-            }
         }
 
         /// <summary>
@@ -181,6 +207,56 @@ namespace ChessAnalyser.Explorer.Rules
         private Piece parsePromotion(string promotionString)
         {
             return Piece.From(promotionString[0]);
+        }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            var result = getMoveRepresentation();
+
+            if (IsMate)
+                result = result + "#";
+            else if (IsCheck)
+                result = result + "+";
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets move representation (without check/mate).
+        /// </summary>
+        /// <returns>The representation.</returns>
+        private string getMoveRepresentation()
+        {
+            var hasFullHint = SourceFileHint.HasValue && SourceRankHint.HasValue;
+
+            var isShortCastle = hasFullHint && SourceFileHint.Value == BoardFile.e && TargetSquare.File == BoardFile.g;
+            var isLongCastle = hasFullHint && SourceFileHint.Value == BoardFile.e && TargetSquare.File == BoardFile.c;
+
+            if (isLongCastle)
+                return "O-O-O";
+
+            if (isShortCastle)
+                return "O-O";
+
+            var hint = "";
+            if (SourceFileHint.HasValue)
+                hint = hint + Square.GetName(SourceFileHint.Value);
+
+            if (SourceRankHint.HasValue)
+                hint = hint + Square.GetName(SourceRankHint.Value);
+
+            var representation = TargetSquare.ToString();
+            if (IsTake)
+                representation = "x" + representation;
+
+            representation = hint + representation;
+            representation = Piece.Notation + representation;
+
+            if (PromotedPiece != null)
+                representation = representation + "=" + PromotedPiece.Notation;
+
+            return representation;
         }
     }
 }
