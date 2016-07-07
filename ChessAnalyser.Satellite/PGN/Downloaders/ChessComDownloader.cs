@@ -31,6 +31,11 @@ namespace ChessAnalyser.Satellite.PGN.Downloaders
         private WebClient _loggedClient;
 
         /// <summary>
+        /// How many request was made by the client.
+        /// </summary>
+        private int _loggedClientRequests;
+
+        /// <summary>
         /// Username used for downloading.
         /// </summary>
         private readonly string _downloadUsername = "pgndown";
@@ -125,7 +130,7 @@ namespace ChessAnalyser.Satellite.PGN.Downloaders
             while (!isComplete)
             {
                 var pageIds = getPageIds(page);
-                if (pageIds == null)
+                if (pageIds == null || pageIds.Count() == 0)
                     return null;
 
                 foreach (var pageId in pageIds)
@@ -189,13 +194,19 @@ namespace ChessAnalyser.Satellite.PGN.Downloaders
         {
             try
             {
+                Console.WriteLine("before {0} download", url);
                 var client = getLoggedClient();
 
                 string htmlCode = client.DownloadString(url);
+                Console.WriteLine("after\n", url);
                 return htmlCode;
             }
-            catch
+            catch (Exception ex)
             {
+                //we are not catching exceptions intentionally 
+                //disconnections, server down,... issues are solved in
+                //upper layers
+                Console.WriteLine(ex);
                 return null;
             }
         }
@@ -206,6 +217,14 @@ namespace ChessAnalyser.Satellite.PGN.Downloaders
         /// <returns>The logged client.</returns>
         private WebClient getLoggedClient()
         {
+            ++_loggedClientRequests;
+            if (_loggedClientRequests > 100)
+            {
+                //refresh login
+                _loggedClientRequests = 0;
+                _loggedClient = null;
+            }
+
             if (_loggedClient != null)
                 return _loggedClient;
 
