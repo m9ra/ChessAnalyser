@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using ChessAnalyser.Explorer.Rules.Pieces;
+
 namespace ChessAnalyser.Explorer.Rules
 {
     public class BoardState
@@ -16,12 +18,133 @@ namespace ChessAnalyser.Explorer.Rules
         /// <summary>
         /// Determine whether short castle is possible. (No Rook, King movement)
         /// </summary>
-        public readonly bool ShortCastleVanished;
+        public readonly bool CanCastleShort;
 
         /// <summary>
         /// Determine whether long castle is possible. (No Rook, King movement)
         /// </summary>
-        public bool LongCastleVanished;
+        public readonly bool CanCastleLong;
+
+        /// <summary>
+        /// Determine whether white is playing next move.
+        /// </summary>
+        public bool IsWhiteMove
+        {
+            get
+            {
+                return LastMove == null || _whitePiecePlacement[LastMove.Target.SquareIndex] == null;
+            }
+        }
+
+        /// <summary>
+        /// Placement of all white pieces.
+        /// </summary>
+        private readonly Piece[] _whitePiecePlacement = new Piece[64];
+
+        /// <summary>
+        /// Placement of all black pieces.
+        /// </summary>
+        private readonly Piece[] _blackPiecePlacement = new Piece[64];
+
+        /// <summary>
+        /// Creates initial board state.
+        /// </summary>
+        public BoardState()
+        {
+            //setup pawns
+            for (var i = 0; i < 8; ++i)
+                putSymmetric(Piece.Pawn, (BoardFile)i, BoardRank._2);
+
+            putSymmetric(Piece.Rook, BoardFile.a);
+            putSymmetric(Piece.Rook, BoardFile.h);
+
+            putSymmetric(Piece.Knight, BoardFile.b);
+            putSymmetric(Piece.Knight, BoardFile.g);
+
+            putSymmetric(Piece.Bishop, BoardFile.c);
+            putSymmetric(Piece.Bishop, BoardFile.f);
+
+            putSymmetric(Piece.Queen, BoardFile.d);
+            putSymmetric(Piece.King, BoardFile.e);
+
+            CanCastleLong = true;
+            CanCastleShort = true;
+        }
+
+        private BoardState(BoardState previousState, Move move)
+        {
+            //TODO handle castling
+            CanCastleLong = previousState.CanCastleLong;
+            CanCastleShort = previousState.CanCastleShort;
+
+            Array.Copy(previousState._whitePiecePlacement, _whitePiecePlacement, _whitePiecePlacement.Length);
+            Array.Copy(previousState._blackPiecePlacement, _blackPiecePlacement, _blackPiecePlacement.Length);
+
+            //TODO handle castling, promotion and en passan side effects
+            var sourceIndex = move.Source.SquareIndex;
+            var targetIndex = move.Target.SquareIndex;
+
+            _whitePiecePlacement[targetIndex] = _whitePiecePlacement[sourceIndex];
+            _blackPiecePlacement[targetIndex] = _blackPiecePlacement[sourceIndex];
+            _whitePiecePlacement[sourceIndex] = null;
+            _blackPiecePlacement[sourceIndex] = null;
+
+            LastMove = move;
+        }
+
+        /// <summary>
+        /// Generats FEN representation of the current state.
+        /// </summary>
+        /// <returns>The FEN string.</returns>
+        public string GetFEN()
+        {
+            var positionColumn = new StringBuilder();
+            for (var rank = 0; rank < 8; ++rank)
+            {
+                var emptySquareCounter = 0;
+                for (var file = 0; file < 8; ++file)
+                {
+                    var square = Square.FromIndexes(file, 7 - rank);
+                    var whitePiece = _whitePiecePlacement[square.SquareIndex];
+                    var blackPiece = _blackPiecePlacement[square.SquareIndex];
+
+                    var isEmpty = whitePiece == null && blackPiece == null;
+
+                    if (isEmpty)
+                    {
+                        ++emptySquareCounter;
+                        continue;
+                    }
+
+                    if (emptySquareCounter > 0)
+                        positionColumn.Append(emptySquareCounter);
+
+                    emptySquareCounter = 0;
+
+                    var isWhite = whitePiece != null;
+                    var pieceLetter = isWhite ? whitePiece.Notation : blackPiece.Notation;
+                    if (pieceLetter == "")
+                        pieceLetter = "p";
+
+                    pieceLetter = isWhite ? pieceLetter.ToUpper() : pieceLetter.ToLower();
+
+                    positionColumn.Append(pieceLetter);
+                }
+
+                if (emptySquareCounter > 0)
+                    positionColumn.Append(emptySquareCounter);
+
+                if (rank < 7)
+                    //delimiter for all except last rank
+                    positionColumn.Append("/"); //file delimiter
+            }
+
+            var colorColumn = IsWhiteMove ? "w" : "b";
+            //TODO implement properly
+            var notImplementedColumns = "KQkq - 0 1";
+
+            return positionColumn.ToString() + " " + colorColumn + " " + notImplementedColumns;
+        }
 
         /// <summary>
         /// Gets moves that are available from current state.
@@ -29,7 +152,19 @@ namespace ChessAnalyser.Explorer.Rules
         /// <returns>The generated moves.</returns>
         public IEnumerable<Move> GetAvailableMoves()
         {
-            throw new NotImplementedException();
+            var relevantPieces = IsWhiteMove ? _whitePiecePlacement : _blackPiecePlacement;
+            var result = new List<Move>();
+            for (var i = 0; i < relevantPieces.Length; ++i)
+            {
+                var piece = relevantPieces[i];
+                if (piece == null)
+                    continue;
+
+                var pieceSquare = Square.FromIndex(i);
+                result.AddRange(piece.GenerateMoves(pieceSquare, this));
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -39,7 +174,7 @@ namespace ChessAnalyser.Explorer.Rules
         /// <returns>The resulting position.</returns>
         public BoardState MakeMove(Move move)
         {
-            throw new NotImplementedException();
+            return new BoardState(this, move);
         }
 
         /// <summary>
@@ -73,7 +208,7 @@ namespace ChessAnalyser.Explorer.Rules
         /// <returns><c>true</c> for white piece, <c>false</c> for black or no piece.</returns>
         internal bool IsWhitePiece(Square pieceSquare)
         {
-            throw new NotImplementedException();
+            return _whitePiecePlacement[pieceSquare.SquareIndex] != null;
         }
 
         /// <summary>
@@ -83,7 +218,24 @@ namespace ChessAnalyser.Explorer.Rules
         /// <returns><c>true</c> if square is empty, <c>false</c> otherwise.</returns>
         internal bool IsEmpty(Square square)
         {
-            throw new NotImplementedException();
+            if (square == null)
+                return false;
+
+            return _whitePiecePlacement[square.SquareIndex] == null && _blackPiecePlacement[square.SquareIndex] == null;
+        }
+
+        /// <summary>
+        /// Determine whether moving to square is taking.
+        /// </summary>
+        /// <param name="square">The tested square.</param>
+        /// <returns><c>true</c> if piece on square can be taken, <c>false</c> otherwise.</returns>
+        internal bool IsTake(Square square)
+        {
+            if (square == null)
+                return false;
+
+            var relevantPieces = IsWhiteMove ? _blackPiecePlacement : _whitePiecePlacement;
+            return relevantPieces[square.SquareIndex] != null;
         }
 
         /// <summary>
@@ -104,7 +256,8 @@ namespace ChessAnalyser.Explorer.Rules
         /// <returns><c>true</c> when the piece is pawn, <c>false</c> otherwise.</returns>
         internal bool IsPawn(Square square)
         {
-            throw new NotImplementedException();
+            var piece = GetPiece(square);
+            return piece is Pawn;
         }
 
         /// <summary>
@@ -114,7 +267,31 @@ namespace ChessAnalyser.Explorer.Rules
         /// <returns><c>true</c> if the square is attacked by enemy piece, <c>false</c> otherwise.</returns>
         internal bool IsChecked(Square square)
         {
-            throw new NotImplementedException();
+            //TODO check control
+            return false;
         }
+
+        internal Piece GetPiece(Square square)
+        {
+            if (square == null)
+                return null;
+
+            var piece = _whitePiecePlacement[square.SquareIndex];
+            if (piece == null)
+                piece = _blackPiecePlacement[square.SquareIndex];
+
+            return piece;
+        }
+
+        #region Position setup utilities
+        private void putSymmetric(Piece piece, BoardFile file, BoardRank whiteRank = BoardRank._1)
+        {
+            var whiteSquare = Square.FromIndexes((int)file, (int)whiteRank);
+            var blackSquare = Square.FromIndexes((int)file, (int)(7 - whiteRank));
+
+            _whitePiecePlacement[whiteSquare.SquareIndex] = piece;
+            _blackPiecePlacement[blackSquare.SquareIndex] = piece;
+        }
+        #endregion
     }
 }

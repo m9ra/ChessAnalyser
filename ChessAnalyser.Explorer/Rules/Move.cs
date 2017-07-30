@@ -32,5 +32,34 @@ namespace ChessAnalyser.Explorer.Rules
         /// Target square of the move.
         /// </summary>
         public readonly Square Target;
+
+        private Move(Piece promotionPiece, Square source, Square target)
+        {
+            PromotionPiece = promotionPiece;
+            Source = source;
+            Target = target;
+        }
+
+        /// <summary>
+        /// Creates move between given string represented squares.
+        /// </summary>
+        public static Move FromString(string source, string target)
+        {
+            return new Move(null, Square.FromString(source), Square.FromString(target));
+        }
+
+        /// <summary>
+        /// Creates move between given squares.
+        /// </summary>
+        public static Move Between(Square source, Square target)
+        {
+            return new Move(null, source, target);
+        }
+
+        /// <inheritdoc/>
+        public override string ToString()
+        {
+            return string.Format("{0}-{1}", Source, Target);
+        }
     }
 }

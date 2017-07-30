@@ -28,9 +28,9 @@ namespace ChessAnalyser.Explorer.Rules.Pieces
                 GenerateMove(pieceSquare, pawn1Target, board, moves);
 
                 var pawn2Target = pawn1Target + pawnDirection;
-                if (board.IsEmpty(pawn2Target) && isInitialPawnPosition(pieceSquare, board))
+                if (isInitialPawnPosition(pieceSquare, board) && board.IsEmpty(pawn2Target))
                     //at first move pawn can go two squares ahead
-                    GenerateMove(pieceSquare, pawn1Target, board, moves);
+                    GenerateMove(pieceSquare, pawn2Target, board, moves);
             }
 
             // pawn takes
@@ -80,7 +80,7 @@ namespace ChessAnalyser.Explorer.Rules.Pieces
         private void generateEnPassanOnly(Square pawnSquare, MoveDirection takeDirection, BoardState board, List<Move> moves)
         {
             var lastMove = board.LastMove;
-            if (!board.IsPawn(lastMove.Target))
+            if (lastMove == null || !board.IsPawn(lastMove.Target))
                 //en passan can be done on pawns only.
                 return;
 
@@ -91,7 +91,8 @@ namespace ChessAnalyser.Explorer.Rules.Pieces
 
             //target for en passan is not the square with target pawn!
             var targetSquare = pawnSquare + getPawnDirection(pawnSquare, board) + takeDirection;
-            GenerateMove(pawnSquare, targetSquare, board, moves);
+            if (board.IsEmpty(targetSquare))
+                GenerateMove(pawnSquare, targetSquare, board, moves);
         }
 
 

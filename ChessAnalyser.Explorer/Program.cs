@@ -17,6 +17,9 @@ namespace ChessAnalyser.Explorer
 
         static void Main(string[] args)
         {
+            WebInterface.ExplorerWebApplication.RunWebServer(4444, args[0]);
+            WebInterface.ExplorerWebApplication.RunConsole();
+            return;
             var client = new NetworkServiceClient<DataPGN>("games.m9ra", "www.packa2.cz");
             client.EntryAdded += client_EntryAdded;
         }

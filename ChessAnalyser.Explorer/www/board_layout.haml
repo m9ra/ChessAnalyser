@@ -1,0 +1,41 @@
+﻿!!!
+%html
+	%head
+		<meta charset='utf-8'/>
+
+		%title Chess Analyser
+		%link{ rel: "stylesheet", href: "css/bootstrap.min.css"}
+		%link{ rel: "stylesheet", href: "css/bootstrap-theme.min.css"}
+		%link{ rel: "stylesheet", href: "http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"}
+
+		%link{ rel: "stylesheet", href: "css/chessboard.css"}
+
+		%link{ rel: "stylesheet", href: "css/style.scss"}
+
+	   		
+		%script{src: "js/jquery-2.0.3.min.js"}			
+			= ""
+
+		%script{src: "http://code.jquery.com/ui/1.10.3/jquery-ui.js"}
+			= ""
+
+		%script{src: "js/explorer_communication.js"}
+			= ""
+
+		%script{src: "js/chessboard.js"}			
+			= ""
+
+		%script{src: "js/chessboardjs_integration.js"}			
+			= ""
+
+	%body
+		#main_board_navigation
+			= ""
+		
+		%script
+			chessboardjs_init("main_board");
+
+		= yield
+
+		%script{src: "js/bootstrap.min.js"}
+			=""

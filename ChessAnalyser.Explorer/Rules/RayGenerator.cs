@@ -68,7 +68,7 @@ namespace ChessAnalyser.Explorer.Rules
         {
             var currentTarget = source;
             var isWhiteMove = board.IsWhitePiece(source);
-            while (!(currentTarget = currentTarget + _direction).IsOutOfBoard)
+            while ((currentTarget = currentTarget + _direction) != null)
             {
                 if (board.IsEmpty(currentTarget) || board.IsWhitePiece(currentTarget) != isWhiteMove)
                 {
@@ -87,7 +87,7 @@ namespace ChessAnalyser.Explorer.Rules
 
         private Move generateMove(Square startingSquare, Square currentTarget, BoardState board)
         {
-            throw new NotImplementedException();
+            return Move.Between(startingSquare, currentTarget);
         }
     }
 }

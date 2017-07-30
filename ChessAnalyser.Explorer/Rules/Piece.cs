@@ -75,6 +75,17 @@ namespace ChessAnalyser.Explorer.Rules
         }
 
         /// <summary>
+        /// Generates moves within given board. Does not perform check or other move right controlls.
+        /// </summary>
+        /// <param name="pieceSquare">Square where piece is standing.</param>
+        /// <param name="board">Board where piece is standing.</param>
+        /// <returns>The generated moves.</returns>
+        public IEnumerable<Move> GenerateMoves(Square pieceSquare, BoardState board)
+        {
+            return this.generateMoves(pieceSquare, board);
+        }
+
+        /// <summary>
         /// Generates move from source to target.
         /// </summary>
         /// <param name="source">Source square.</param>
@@ -83,7 +94,11 @@ namespace ChessAnalyser.Explorer.Rules
         /// <param name="moves">Storage for generated moves.</param>
         protected void GenerateMove(Square source, Square target, BoardState board, List<Move> moves)
         {
-            throw new NotImplementedException();
+            if (target == null)
+                return;
+
+            if (board.IsEmpty(target) || board.IsTake(target))
+                moves.Add(Move.Between(source, target));
         }
 
         /// <summary>
@@ -113,7 +128,8 @@ namespace ChessAnalyser.Explorer.Rules
         /// <param name="moves">Storage for generated moves.</param>
         protected void GenerateTakeOnlyMove(Square source, Square target, BoardState board, List<Move> moves)
         {
-            throw new NotImplementedException();
+            if (board.IsTake(target))
+                moves.Add(Move.Between(source, target));
         }
 
         /// <summary>

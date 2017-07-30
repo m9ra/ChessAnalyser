@@ -27,13 +27,13 @@ namespace ChessAnalyser.Explorer.Rules.Pieces
                     GenerateMove(pieceSquare, target, board, moves);
             }
 
-            if (!board.ShortCastleVanished && isCastleFree(pieceSquare, MoveDirection.Right, board))
+            if (board.CanCastleShort && isCastleFree(pieceSquare, MoveDirection.Right, board))
             {
                 //short castle
                 GenerateMove(pieceSquare, pieceSquare.Shift(2, 0), board, moves);
             }
 
-            if (!board.LongCastleVanished && isCastleFree(pieceSquare, MoveDirection.Left, board))
+            if (board.CanCastleLong && isCastleFree(pieceSquare, MoveDirection.Left, board))
             {
                 //long castle
                 GenerateMove(pieceSquare, pieceSquare.Shift(-2, 0), board, moves);

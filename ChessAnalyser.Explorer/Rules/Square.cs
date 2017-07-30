@@ -8,7 +8,7 @@ namespace ChessAnalyser.Explorer.Rules
 {
     public enum BoardFile { a = 0, b, c, d, e, f, g, h };
 
-    public enum BoardRank { _1 = 0, _2, r3, _4, _5, _6, _7, _8 };
+    public enum BoardRank { _1 = 0, _2, _3, _4, _5, _6, _7, _8 };
 
     /// <summary>
     /// Represents square of the chessboard. Squares are treated as singletons.
@@ -26,14 +26,9 @@ namespace ChessAnalyser.Explorer.Rules
         public readonly BoardFile File;
 
         /// <summary>
-        /// Determine whether the square lies out of the board.
-        /// </summary>
-        public readonly bool IsOutOfBoard;
-
-        /// <summary>
         /// Index of represented square.
         /// </summary>
-        private readonly int _squareIndex;
+        internal readonly int SquareIndex;
 
         #region Operation indexing
 
@@ -47,11 +42,6 @@ namespace ChessAnalyser.Explorer.Rules
         /// </summary>
         static private readonly Square[,] _boardSquares = new Square[8, 8];
 
-        /// <summary>
-        /// Target squares indexed by direction and starting square.
-        /// </summary>
-        static private readonly Square[, ,] _squareMoves = new Square[8, 8, 8];
-
         #endregion
 
         static Square()
@@ -63,8 +53,10 @@ namespace ChessAnalyser.Explorer.Rules
                 for (var rankIndex = 0; rankIndex < 8; ++rankIndex)
                 {
                     var square = new Square(squareIndex, (BoardFile)fileIndex, (BoardRank)rankIndex);
-                    _indexedSquares[square._squareIndex] = square;
+                    _indexedSquares[square.SquareIndex] = square;
                     _boardSquares[fileIndex, rankIndex] = square;
+
+                    ++squareIndex;
                 }
             }
         }
@@ -73,7 +65,7 @@ namespace ChessAnalyser.Explorer.Rules
         {
             File = file;
             Rank = rank;
-            _squareIndex = squareIndex;
+            SquareIndex = squareIndex;
         }
 
         /// <summary>
@@ -109,6 +101,24 @@ namespace ChessAnalyser.Explorer.Rules
             var rank = RankFrom(squareRepresentation[1]);
 
             return _boardSquares[(int)file, (int)rank];
+        }
+
+        /// <summary>
+        /// Gets square from indexes.
+        /// </summary>
+        /// <returns>The square.</returns>
+        internal static Square FromIndexes(int file, int rank)
+        {
+            return _boardSquares[file, rank];
+        }
+
+        /// <summary>
+        /// Gets square from index.
+        /// </summary>
+        /// <returns>The square.</returns>
+        internal static Square FromIndex(int index)
+        {
+            return _indexedSquares[index];
         }
 
         /// <summary>
