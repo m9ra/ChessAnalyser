@@ -1,5 +1,5 @@
 ﻿var chessboardjs_init = function (board_name) {
-    var board_history = [];
+    var board;
 
 
     document.writeln("<div id='" + board_name + "'/>");
@@ -28,11 +28,11 @@
             return false;
 
         if (board.available_moves[source].indexOf(target) >= 0)
-            board_history.push([source, target]);
+            board.history.push([source, target]);
     };
 
     var onSnapEnd = function () {
-        on_board_updated(board_name, board_history);
+        on_board_updated(board_name, board.history);
     };
 
     var cfg = {
@@ -41,10 +41,10 @@
         onDrop: onDrop,
         onSnapEnd: onSnapEnd
     };
-    var board = ChessBoard(board_name, cfg);
-    board.history = board_history;
+    board = ChessBoard(board_name, cfg);
+    board.history = [];
     board.available_moves = {};
 
     ACTIVE_BOARDS[board_name] = board;
-    on_board_updated(board_name, board_history);
+    on_board_updated(board_name, board.history);
 };

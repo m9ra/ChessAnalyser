@@ -11,13 +11,8 @@ namespace ChessAnalyser.Explorer.Rules
     /// <summary>
     /// Representation of move in algebraic notation.
     /// </summary>
-    public class ShortMoveNotation
+    public class ShortMove
     {
-        /// <summary>
-        /// <c>true</c> if it is white move, <c>false</c> otherwise.
-        /// </summary>
-        public readonly bool IsWhitesMove;
-
         /// <summary>
         /// Determine if the move is causing check.
         /// </summary>
@@ -58,9 +53,66 @@ namespace ChessAnalyser.Explorer.Rules
         /// </summary>
         public readonly Piece PromotedPiece;
 
-        public ShortMoveNotation(string notation, bool isWhitesMove)
+        public ShortMove(Move move, BoardState board)
         {
-            IsWhitesMove = isWhitesMove;
+            var availableMoves = board.GetAvailableMoves();
+
+            var source = move.Source;
+            var target = move.Target;
+            var takenPiece = board.GetPiece(move.Target);
+
+            var nextBoard = board.MakeMove(move);
+            var nextAvailableMoves = nextBoard.GetAvailableMoves();
+
+
+            TargetSquare = target;
+            Piece = board.GetPiece(move.Source);
+            PromotedPiece = move.PromotionPiece;
+
+            //TODO handle en passan
+            IsTake = takenPiece != null;
+            //TODO handle check
+            IsCheck = false;
+            IsMate = IsCheck && !nextAvailableMoves.Any();
+
+            if (Piece is Pawn)
+            {
+                IsTake = source.File != target.File;
+                if (IsTake)
+                    SourceFileHint = source.File;
+            }
+
+            var isCastle = Piece is King && Math.Abs(target.File - source.File) > 1;
+            if (isCastle)
+                SourceFileHint = source.File;
+
+            var targetMoves = availableMoves.Where(m => m.Target == target).Where(m => board.GetPiece(m.Source).GetType() == Piece.GetType());
+            var otherTargetMoves = targetMoves.Where(m => m.Source != source).ToArray();
+            if (!otherTargetMoves.Any())
+                //no more hints is required
+                return;
+
+            //handle unique move determination
+            var hasUniqueFile = otherTargetMoves.All(m => m.Source.File != source.File);
+            var hasUniqueRank = otherTargetMoves.All(m => m.Source.Rank != source.Rank);
+
+            if (hasUniqueFile)
+            {
+                SourceFileHint = source.File;
+            }
+            else if (hasUniqueRank)
+            {
+                SourceRankHint = source.Rank;
+            }
+            else
+            {
+                SourceFileHint = source.File;
+                SourceRankHint = source.Rank;
+            }
+        }
+
+        public ShortMove(string notation, bool isWhitesMove)
+        {
             IsMate = notation.EndsWith("#");
             IsCheck = notation.EndsWith("+") || IsMate;
 
@@ -228,10 +280,10 @@ namespace ChessAnalyser.Explorer.Rules
         /// <returns>The representation.</returns>
         private string getMoveRepresentation()
         {
-            var hasFullHint = SourceFileHint.HasValue && SourceRankHint.HasValue;
+            var isCastle = Piece is King && SourceFileHint.HasValue && Math.Abs(SourceFileHint.Value - TargetSquare.File) > 1;
 
-            var isShortCastle = hasFullHint && SourceFileHint.Value == BoardFile.e && TargetSquare.File == BoardFile.g;
-            var isLongCastle = hasFullHint && SourceFileHint.Value == BoardFile.e && TargetSquare.File == BoardFile.c;
+            var isShortCastle = isCastle && TargetSquare.File == BoardFile.g;
+            var isLongCastle = isCastle && TargetSquare.File == BoardFile.c;
 
             if (isLongCastle)
                 return "O-O-O";

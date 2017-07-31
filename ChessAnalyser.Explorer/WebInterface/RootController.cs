@@ -25,25 +25,27 @@ namespace ChessAnalyser.Explorer.WebInterface
         public void ajax_commands()
         {
             var commandJson = POST("commands_json");
-            var commands = parseCommands(commandJson);
-            var responseCommands = new List<Dictionary<string, object>>();
+            var events = parseEvents(commandJson);
+            var responseCommands = new List<AjaxCommand>();
 
-            foreach (var command in commands)
+            foreach (var ajaxEvent in events)
             {
-                var commandName = command["name"].ToString();
-                handleCommand(commandName, command, responseCommands);
+                var eventName = ajaxEvent["name"].ToString();
+                handleCommand(eventName, ajaxEvent, responseCommands);
             }
 
             RenderJson(responseCommands);
         }
 
 
-        private void handleCommand(string commandName, Dictionary<string, object> command, List<Dictionary<string, object>> responseCommands)
+        private void handleCommand(string commandName, AjaxEvent ajaxEvent, List<AjaxCommand> responseCommands)
         {
+            var user = getCurrentUser();
+
             switch (commandName)
             {
                 case "on_board_updated":
-                    command_onBoardUpdated(command, responseCommands);
+                    command_onBoardUpdated(user, ajaxEvent, responseCommands);
                     break;
 
                 default:
@@ -51,62 +53,14 @@ namespace ChessAnalyser.Explorer.WebInterface
             }
         }
 
-        #region Response command handlers
-
-        private void send_setBoardPosition(string boardName, Board board, List<Dictionary<string, object>> responseCommands)
-        {
-            var fen = board.CurrentState.GetFEN();
-            var availableMoves = getAvailableMovesIndex(board);
-
-            var responseCommand = new Dictionary<string, object>()
-            {
-                { "name", "set_board_position" },
-                { "board_name", boardName},
-                { "current_fen", fen},
-                { "available_moves", availableMoves}
-            };
-
-            responseCommands.Add(responseCommand);
-        }
-
-        private void send_setBoardNavigation(string boardName, Move[] history, List<Dictionary<string, object>> responseCommands)
-        {
-            var info = string.Join("</br>\n", history.ToList());
-
-            var responseCommand = new Dictionary<string, object>()
-            {
-                { "name", "set_board_navigation" },
-                { "info", info},
-                { "board_name", boardName},
-            };
-
-            responseCommands.Add(responseCommand);
-        }
-
-        #endregion
-
         #region Command handlers
 
-        private void command_onBoardUpdated(Dictionary<string, object> command, List<Dictionary<string, object>> responseCommands)
+        private void command_onBoardUpdated(UserData data, AjaxEvent ajaxEvent, List<AjaxCommand> responseCommands)
         {
-            var boardName = command["board_name"].ToString();
-            var history = getMovesFromArray((ArrayList)command["history"]);
+            var boardName = ajaxEvent["board_name"].ToString();
+            var history = getMovesFromArray((ArrayList)ajaxEvent["history"]);
 
-            var board = new Board();
-            board.MakeMoves(history);
-
-            send_setBoardPosition(boardName, board, responseCommands);
-            send_setBoardNavigation(boardName, history, responseCommands);
-        }
-
-        #endregion
-
-        private Dictionary<string, object> getAvailableMovesIndex(Board board)
-        {
-            var moves = board.CurrentState.GetAvailableMoves();
-
-            var result = moves.GroupBy(m => m.Source).ToDictionary(g => g.Key.ToString(), g => (object)g.Select(m => m.Target.ToString()).ToList());
-            return result;
+            data.OnBoardUpdated(boardName, history, responseCommands);
         }
 
         private Move[] getMovesFromArray(ArrayList obj)
@@ -121,16 +75,27 @@ namespace ChessAnalyser.Explorer.WebInterface
                 return Move.FromString(from, to);
             });
 
-
             return moves;
         }
 
-        private Dictionary<string, object>[] parseCommands(string json)
+        private AjaxEvent[] parseEvents(string json)
         {
             var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
             var data = serializer.Deserialize<Dictionary<string, object>[]>(json);
 
-            return data;
+            return data.Select(d => new AjaxEvent(d)).ToArray();
         }
+
+        #endregion
+
+        #region User handling
+
+        private UserData getCurrentUser()
+        {
+            //TODO 
+            return Session<UserData>(() => new UserData("m9ra"));
+        }
+
+        #endregion
     }
 }

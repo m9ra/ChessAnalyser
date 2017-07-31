@@ -12,6 +12,8 @@ namespace ChessAnalyser.Explorer.Rules
 
         private BoardState _currentState = new BoardState();
 
+        public IEnumerable<Move> History => _moveHistory;
+
         public BoardState CurrentState
         {
             get

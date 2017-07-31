@@ -17,6 +17,7 @@ var handle_commands = function (data) {
                 var board = ACTIVE_BOARDS[board_name];
                 board.position(command["current_fen"]);
                 board.available_moves = command["available_moves"];
+                board.history = command["history"];
                 break;
 
             case 'set_board_navigation':

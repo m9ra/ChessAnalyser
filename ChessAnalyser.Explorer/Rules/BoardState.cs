@@ -25,6 +25,10 @@ namespace ChessAnalyser.Explorer.Rules
         /// </summary>
         public readonly bool CanCastleLong;
 
+        public readonly bool CanOtherCastleLong;
+
+        public readonly bool CanOtherCastleShort;
+
         /// <summary>
         /// Determine whether white is playing next move.
         /// </summary>
@@ -69,27 +73,75 @@ namespace ChessAnalyser.Explorer.Rules
 
             CanCastleLong = true;
             CanCastleShort = true;
+            CanOtherCastleLong = true;
+            CanOtherCastleShort = true;
         }
 
         private BoardState(BoardState previousState, Move move)
         {
-            //TODO handle castling
-            CanCastleLong = previousState.CanCastleLong;
-            CanCastleShort = previousState.CanCastleShort;
+            CanCastleLong = previousState.CanOtherCastleLong;
+            CanCastleShort = previousState.CanOtherCastleShort;
+            CanOtherCastleLong = previousState.CanCastleLong;
+            CanOtherCastleShort = previousState.CanCastleShort;
 
             Array.Copy(previousState._whitePiecePlacement, _whitePiecePlacement, _whitePiecePlacement.Length);
             Array.Copy(previousState._blackPiecePlacement, _blackPiecePlacement, _blackPiecePlacement.Length);
 
-            //TODO handle castling, promotion and en passan side effects
+            LastMove = move;
+
+            var sourceSquare = move.Source;
+            var targetSquare = move.Target;
             var sourceIndex = move.Source.SquareIndex;
             var targetIndex = move.Target.SquareIndex;
 
-            _whitePiecePlacement[targetIndex] = _whitePiecePlacement[sourceIndex];
-            _blackPiecePlacement[targetIndex] = _blackPiecePlacement[sourceIndex];
-            _whitePiecePlacement[sourceIndex] = null;
-            _blackPiecePlacement[sourceIndex] = null;
+            var wasWhiteMove = _whitePiecePlacement[sourceIndex] != null;
+            var relevantPiecePlacement = wasWhiteMove ? _whitePiecePlacement : _blackPiecePlacement;
+            var oppositePiecePlacement = wasWhiteMove ? _blackPiecePlacement : _whitePiecePlacement;
 
-            LastMove = move;
+            var movedPiece = relevantPiecePlacement[sourceIndex];
+            var takenPiece = oppositePiecePlacement[targetIndex];
+
+            setMove(sourceSquare, targetSquare);
+
+            var wasKingMove = movedPiece is King;
+            var wasRookMove = movedPiece is Rook;
+            var wasPawnMove = movedPiece is Pawn;
+
+            //handles castling, promotion and en passan side effects
+            if (wasPawnMove)
+            {
+                var isEnPassan = sourceSquare.File != targetSquare.File && takenPiece == null;
+                var isPromotion = targetSquare.Rank == BoardRank._1 || targetSquare.Rank == BoardRank._8;
+                if (isEnPassan)
+                    oppositePiecePlacement[Square.From(targetSquare.File, sourceSquare.Rank).SquareIndex] = null;
+                else if (isPromotion)
+                    relevantPiecePlacement[targetIndex] = move.PromotionPiece;
+            }
+            else if (wasKingMove)
+            {
+                //handle castling side effects
+                if (CanOtherCastleLong && targetSquare.File == BoardFile.c)
+                {
+                    //move a rook
+                    setMove(Square.From(BoardFile.a, targetSquare.Rank), Square.From(BoardFile.d, targetSquare.Rank));
+                }
+                else if (CanOtherCastleShort && targetSquare.File == BoardFile.g)
+                {
+                    //move h rook
+                    setMove(Square.From(BoardFile.h, targetSquare.Rank), Square.From(BoardFile.f, targetSquare.Rank));
+                }
+
+                CanOtherCastleLong = false;
+                CanOtherCastleShort = false;
+            }
+            else if (wasRookMove)
+            {
+                //rook move vanishes castling
+                if (sourceSquare.File == BoardFile.a)
+                    CanOtherCastleLong = false;
+                else
+                    CanOtherCastleShort = false;
+            }
         }
 
         /// <summary>
@@ -284,6 +336,7 @@ namespace ChessAnalyser.Explorer.Rules
         }
 
         #region Position setup utilities
+
         private void putSymmetric(Piece piece, BoardFile file, BoardRank whiteRank = BoardRank._1)
         {
             var whiteSquare = Square.FromIndexes((int)file, (int)whiteRank);
@@ -292,6 +345,18 @@ namespace ChessAnalyser.Explorer.Rules
             _whitePiecePlacement[whiteSquare.SquareIndex] = piece;
             _blackPiecePlacement[blackSquare.SquareIndex] = piece;
         }
+
+        private void setMove(Square source, Square target)
+        {
+            var sourceIndex = source.SquareIndex;
+            var targetIndex = target.SquareIndex;
+
+            _whitePiecePlacement[targetIndex] = _whitePiecePlacement[sourceIndex];
+            _blackPiecePlacement[targetIndex] = _blackPiecePlacement[sourceIndex];
+            _whitePiecePlacement[sourceIndex] = null;
+            _blackPiecePlacement[sourceIndex] = null;
+        }
+
         #endregion
     }
 }

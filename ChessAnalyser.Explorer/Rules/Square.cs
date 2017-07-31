@@ -113,6 +113,15 @@ namespace ChessAnalyser.Explorer.Rules
         }
 
         /// <summary>
+        /// Gets square from indexes.
+        /// </summary>
+        /// <returns>The square.</returns>
+        internal static Square From(BoardFile file, BoardRank rank)
+        {
+            return FromIndexes((int)file, (int)rank);
+        }
+
+        /// <summary>
         /// Gets square from index.
         /// </summary>
         /// <returns>The square.</returns>

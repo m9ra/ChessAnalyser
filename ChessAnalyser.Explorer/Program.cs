@@ -19,9 +19,6 @@ namespace ChessAnalyser.Explorer
         {
             WebInterface.ExplorerWebApplication.RunWebServer(4444, args[0]);
             WebInterface.ExplorerWebApplication.RunConsole();
-            return;
-            var client = new NetworkServiceClient<DataPGN>("games.m9ra", "www.packa2.cz");
-            client.EntryAdded += client_EntryAdded;
         }
 
         static void client_EntryAdded(DataPGN entry)
@@ -42,7 +39,7 @@ namespace ChessAnalyser.Explorer
             if (move == null)
                 return;
 
-            var parsedMove = new ShortMoveNotation(move, isWhite);
+            var parsedMove = new ShortMove(move, isWhite);
             var parsedMoveString = parsedMove.ToString();
 
             if (parsedMoveString != move)
